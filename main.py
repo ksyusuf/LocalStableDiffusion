@@ -1,5 +1,4 @@
-import os
-from flask import Flask, request, send_file
+from flask import Flask, request
 import base64
 from PIL import Image
 from io import BytesIO
@@ -15,7 +14,8 @@ def process_image():
     prompt = request.form['prompt']
 
     image = Image.open(BytesIO(base64.b64decode(image_data)))
-    image.save(os.path.join("downloads", "gelen_resim.png"))
+    image.save('downloads/gelen_resim.png', 'PNG')
+    # image.save(os.path.join("downloads", "gelen_resim.png"))
 
     # Burada resim üzerinde istediğin değişiklikleri yap
     image_path = BytesIO(base64.b64decode(image_data))

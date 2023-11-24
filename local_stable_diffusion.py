@@ -14,7 +14,7 @@ def uniquify(path):
 
 class Img2Img:
     def __init__(self):
-        self.model_path = os.getenv("SDV5_MODEL_PATH")
+        self.model_path = "C:/Users/ksyus/Documents/Yazılımsal Projeler/adCreative.ai iş başvuru case çalışması/stable-diffusion-v1-5"
         # todo: yayınlamadan önce bu yapıyı değiştirmelisin.
         # şuanda modeli proje dışındaki bir klasörden alıyor.
         # # şu haliyle sunucuda çalışmaz. çünkü stable diffusion proje dışında.
