@@ -14,13 +14,9 @@ def uniquify(path):
 
 class Img2Img:
     def __init__(self):
-        self.model_path = "C:/Users/ksyus/Documents/Yazılımsal Projeler/adCreative.ai iş başvuru case çalışması/stable-diffusion-v1-5"
+        self.model_path = "../stable-diffusion-v1-5"
         # todo: yayınlamadan önce bu yapıyı değiştirmelisin.
-        # şuanda modeli proje dışındaki bir klasörden alıyor.
-        # # şu haliyle sunucuda çalışmaz. çünkü stable diffusion proje dışında.
-        self.save_path = os.path.join("C:/Users/ksyus/Documents/Yazılımsal Projeler/adCreative.ai iş başvuru case "
-                                      "çalışması", "SDV5_OUTPUT")
-        # todo: yayından önce düzeltilecek.
+        self.save_path = os.path.join("../", "SDV5_OUTPUT")
         if not os.path.exists(self.save_path):
             os.mkdir(self.save_path)
         # modeli oluşturalım
@@ -29,8 +25,8 @@ class Img2Img:
 
     def generate_image(self, prompt, image_path, strength=0.05, guidance_scale=0.05):
         # todo: parametleri düzeltmeyi unutma. parametreler de input olarak alınabilir.
-        # strength; 0: aynı resme yakınlaşır, 1: yaratıcılık artar. 0.75
-        # guidance_scale: değer ne kadar büyük olursa promtun işlevi o kadar artar. 7.5
+        # strength; 0: aynı resme yakınlaşır, 1: yaratıcılık artar. (0.75)
+        # guidance_scale: değer ne kadar büyük olursa promtun işlevi o kadar artar. (7.5)
         init_image = Image.open(image_path).convert("RGB")
         init_image = init_image.resize((512, 512))
 
@@ -51,8 +47,7 @@ class Img2Img:
 if __name__ == '__main__':
     image_pipeline = Img2Img()
     image_pipeline.generate_image(prompt="guzel bir kahve",
-                                  image_path="C:/Users/ksyus/Documents/Yazılımsal Projeler/adCreative.ai iş başvuru "
-                                             "case çalışması/coffee-4908764_1280.jpg")
+                                  image_path="../kışlık kahve.jpg")
 else:
     print("img2img dışarıdan çalıştırıldı.")
     image_pipeline = Img2Img()
