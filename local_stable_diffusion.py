@@ -27,7 +27,7 @@ class Img2Img:
         self.pipe = StableDiffusionImg2ImgPipeline.from_pretrained(self.model_path)
         self.pipe = self.pipe.to('cpu')
 
-    def generate_image(self, prompt, image_path, strength=0.1, guidance_scale=0.3):
+    def generate_image(self, prompt, image_path, strength=0.05, guidance_scale=0.05):
         # todo: parametleri düzeltmeyi unutma. parametreler de input olarak alınabilir.
         # strength; 0: aynı resme yakınlaşır, 1: yaratıcılık artar. 0.75
         # guidance_scale: değer ne kadar büyük olursa promtun işlevi o kadar artar. 7.5

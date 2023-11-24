@@ -1,63 +1,38 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
-from io import BytesIO
+import os
+from flask import Flask, request, send_file
+import base64
 from PIL import Image
-import local_stable_diffusion
+from io import BytesIO
+from local_stable_diffusion import image_pipeline
+
+app = Flask(__name__)
 
 
-###### BURASI YEREL BİLGİSAYAR. STABLE DİFFUSİON OLDUĞU YER.
-#### BURASI AÇIK OLACAK. DİĞER TARAF BURAYA İSTEK GÖNDERECEK.
-#### EĞER BURASI KAPALI İSE DİĞER TARAFTA BİLDİRİM VERİLECEK ""YEREL PC KAPALI"" DİYE
+@app.route('/process_image', methods=['POST'])
+def process_image():
+    # Gelen veriyi Base64'ten çöz
+    image_data = request.form['image']
+    prompt = request.form['prompt']
 
-class MyHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+    image = Image.open(BytesIO(base64.b64decode(image_data)))
+    image.save(os.path.join("downloads", "gelen_resim.png"))
 
-        ##################################################################################3
+    # Burada resim üzerinde istediğin değişiklikleri yap
+    image_path = BytesIO(base64.b64decode(image_data))
+    processed_image = image_pipeline.generate_image(prompt=prompt,
+                                                    image_path=image_path)
 
-        ## BURADA GELEN İSTEĞİ ALGILAYIP VERİLERİ OLUŞTURUP YOLLUYORUZ.
-        ## VERİ GELMİYOR BURAYA. POST DEĞİL ÇÜNKÜ.
+    # İşlenmiş resmi bir BytesIO nesnesine kaydet
+    processed_image_data = BytesIO()
+    processed_image.save(processed_image_data, format='JPEG')
+    processed_image_data.seek(0)
 
-        # Image Content
-        prompt = "latte in red cup"
-        image_path = "../coffee-4908764_1280.jpg"  # Değiştirebilirsiniz
-        generated_image = local_stable_diffusion.image_pipeline.generate_image(prompt=prompt,
-                                                                               image_path=image_path)
+    # İşlenmiş resmi Base64 kodlayarak string'e çevir
+    encoded_processed_image = base64.b64encode(processed_image_data.getvalue()).decode('utf-8')
 
-        buffered = BytesIO()
-        generated_image.save(buffered, format="PNG")
-        image_bytes = buffered.getvalue()
-
-        self.wfile.write(image_bytes)
-        print("oluşturma tamamlandı. RESİM GERİ GÖNDERİLDİ.")
-
-        ##################################################################################3
-
-    def do_POST(self):
-        content_length = int(self.headers['Content-Length'])
-        received_data = self.rfile.read(content_length)
-
-        ## SANIRIM BURASI POST İŞLŞEMİNİN KARŞILANDIĞI YER OLUYOR.
-        ## EĞER YAPABİLİRSEM POST İLE PROMT VE İMAGE ALIRIM
-        ## RETURN OLARAK GENERATED_İMAGE DÖNDÜRÜRÜM BASİT.
-
-        # Burada received_data'yi kullanabilirsiniz
-        # Örneğin, dosyaya kaydedebilir veya başka bir işlem yapabilirsiniz
-
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        self.wfile.write("POST isteği başarıyla alındı.".encode('utf-8'))
-        # RESMİN BAŞARIYLA GELDİĞİNİ BİLDİRİR AMA KARŞIDA KARŞIKLANMADIĞI İÇİN OKUYAMIYORUZ.
-
-
-def run(server_class=HTTPServer, handler_class=MyHandler, port=8080):
-    server_address = ('', port)
-    httpd = server_class(server_address, handler_class)
-    print(f"Sunucu {port} portunda çalışıyor...")
-    httpd.serve_forever()
+    # İşlenmiş resmi istemciye geri gönder
+    return {'processed_image': encoded_processed_image}
 
 
 if __name__ == '__main__':
-    run()
+    app.run(host='192.168.84.106', port=8000, debug=True)
