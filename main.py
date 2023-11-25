@@ -35,4 +35,12 @@ def process_image():
 
 
 if __name__ == '__main__':
-    app.run(host='192.168.84.106', port=8000, debug=True)
+    ip_adresi = "192.168.1.199"
+    port = "8000"
+    print(f"Çalışıyor: http://{ip_adresi}:{port}/process_image")
+
+    app.run(host='192.168.1.199', port=8000, debug=True)
+    # app.run(port=8000, debug=True)
+    # host uzak pc ile aynı olmazsa eşleşmedi
+    # e host kısmına sunucu ip sini yazınca olmuyorsa
+    # nasıl olacak.
